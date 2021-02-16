@@ -25,6 +25,7 @@ import java.util.Random;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.nio.charset.Charset;
+import org.json.*;
 
 class WebServer {
   public static void main(String args[]) {
@@ -71,7 +72,7 @@ class WebServer {
   /**
    * Used in the "/random" endpoint
    */
-  private final static HashMap<String, String> _images = new HashMap<>() {
+  private final static HashMap<String, String> _images = new HashMap<String, String>() {
     {
       put("streets", "https://iili.io/JV1pSV.jpg");
       put("bread", "https://iili.io/Jj9MWG.jpg");
@@ -193,6 +194,7 @@ class WebServer {
             builder.append("\n");
             builder.append("File not found: " + file);
           }
+		  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         } else if (request.contains("multiply?")) {
           // This multiplies two numbers, there is NO error handling, so when
           // wrong data is given this just crashes
@@ -206,12 +208,12 @@ class WebServer {
 		  Integer num2 = 1;
 		  Boolean n1 = true;
 		  Boolean n2 = true;
-		  if(Integer.parseInt(query_pairs.get("num1") != null) {
-			  Integer num1 = Integer.parseInt(query_pairs.get("num1"));
+		  if(query_pairs.get("num1") != null) {
+			  num1 = Integer.parseInt(query_pairs.get("num1"));
 			  n1 = false;
 		  }
-		  if(Integer.parseInt(query_pairs.get("num2") != null) {
-			  Integer num2 = Integer.parseInt(query_pairs.get("num2"));
+		  if(query_pairs.get("num2") != null) {
+			  num2 = Integer.parseInt(query_pairs.get("num2"));
 			  n2 = false;
 		  }
 
@@ -235,7 +237,7 @@ class WebServer {
           // TODO: Include error handling here with a correct error code and
           // a response that makes sense
 
-        } else if (request.contains("github?")) {
+        } else if (request.contains("github?")) { /////////////////////////////////////////////////////////////////////////////////////////////////
           // pulls the query from the request and runs it with GitHub's REST API
           // check out https://docs.github.com/rest/reference/
           //
@@ -256,21 +258,25 @@ class WebServer {
           // amehlhase, 46384989 -> memoranda
           // amehlhase, 46384989 -> ser316examples
           // amehlhase, 46384989 -> test316
-		  JSONObject ghub = JSON.parse(json);
+		  
+		  JSONArray jArr = new JSONArray(json);
+		  
 		  String owner, id, name;
 		  boolean first = true;
-		  while(??) {
+		  for(int i=0; i<jArr.length(); i++) {
 			  if(first) {
 				  builder.append("HTTP/1.1 200 OK\n");
 				  builder.append("Content-Type: text/html; charset=utf-8\n");
 				  first = false;
 			  }
-			  owner = ghub.owner.login;
-			  id = ghub.owner.id;
-			  name = ghub.name;
-			  builder.append("\nOwner name: " + owner);
-			  builder.append("\nOwner id: " + id);
-			  builder.append("\nRepository name: " + name);
+			  JSONObject repo = jArr.getJSONObject(i);
+			  JSONObject repoOwner = repo.getJSONObject("owner");
+			  owner = repoOwner.getString("login");
+			  id = repoOwner.getString("id");
+			  name = repo.getString("name");
+			  builder.append("\n" + owner);
+			  builder.append(", " + id);
+			  builder.append(" -> " + name);
 		  }
 
         } else {
@@ -327,9 +333,9 @@ class WebServer {
     if (filenames.size() > 0) {
       StringBuilder builder = new StringBuilder();
       builder.append("<ul>\n");
-      for (var filename : filenames) {
-        builder.append("<li>" + filename + "</li>");
-      }
+//      for (var filename : filenames) {
+//        builder.append("<li>" + filename + "</li>");
+//      }
       builder.append("</ul>\n");
       return builder.toString();
     } else {
