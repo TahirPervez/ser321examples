@@ -20,8 +20,7 @@ class UDPClient
 		System.out.println("Type your message:");
 
 		// setup packet
-        BufferedReader inFromUser =
-				new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader inFromUser =	new BufferedReader(new InputStreamReader(System.in));
 		DatagramSocket clientSocket = new DatagramSocket();
 		InetAddress IPAddress = InetAddress.getByName(host);
 		byte[] sendData = new byte[1024];

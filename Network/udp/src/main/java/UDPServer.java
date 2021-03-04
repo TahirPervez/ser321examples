@@ -30,13 +30,12 @@ class UDPServer
 			System.out.println("RECEIVED: " + sentence);
 			if (args.length > 0) Thread.sleep(delay);
 			// pull reply address
-			InetAddress IPAddress = receivePacket.getAddress();
-			int port = receivePacket.getPort();
+			InetAddress IPAddress = receivePacket.getAddress(); //pull the address from the message received to get the client address
+			int port = receivePacket.getPort(); //pull the port from the message received to get the client port
 			String capitalizedSentence = sentence.toUpperCase();
 			// send response
 			sendData = capitalizedSentence.getBytes();
-			DatagramPacket sendPacket =
-					new DatagramPacket(sendData, sendData.length, IPAddress, port);
+			DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, port);
 			serverSocket.send(sendPacket);
 		}
 	}

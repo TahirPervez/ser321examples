@@ -58,7 +58,7 @@ class SockClient {
 		if(json.getBoolean("ok")) {
 			if(json.getString("type").equals("message")) {
 				System.out.println("Here is your return : " + json.getString("value"));
-			} else if(json.getString("type").eqsuals("message")) {
+			} else if(json.getString("type").equals("number")) {
 				System.out.println("Here is your return : " + json.getInt("value"));
 			} else if (json.getString("type").equals("exit")) {
 				System.out.println("BYE");

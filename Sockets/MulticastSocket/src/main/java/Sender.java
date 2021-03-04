@@ -21,9 +21,8 @@ class Sender {
 		InetAddress group = InetAddress.getByName(addr);
         MulticastSocket socket = new MulticastSocket(port);
         socket.joinGroup(group);
-		DatagramPacket packet =
-			new DatagramPacket(msg.getBytes(), msg.length(), group, port);
-       socket.send(packet);
+		DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), group, port);
+		socket.send(packet);
         socket.leaveGroup(group);
         socket.close();
 	}
