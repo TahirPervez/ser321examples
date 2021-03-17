@@ -41,7 +41,31 @@ class SockBaseServer {
                 clientSocket = serv.accept();
                 in = clientSocket.getInputStream();
                 out = clientSocket.getOutputStream();
+				
+				// Read in
+				Request req = Request.parseDelimitedFrom(in);
+				System.out.println(req.toString());
+				
+				int val = 0;
+				if(req.getOperationType() == Request.OperationType.ADD) {
+					// Add
+					for (int num: req.getNumsList()) {
+						val += num;
+					}
+				} else if(req.getOperationType() == Request.OperationType.SUB) {
+					
+				}
+
                 
+				// Create Out
+				Response.Builder resBuilder = Response.newBuilder();
+				resBuilder.setSuccesst(true);
+				resBuilder.setResult(val);
+				Response res = resBuilder.build();
+				
+				// Send out
+				res.writeDelimitedTo(out);
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {

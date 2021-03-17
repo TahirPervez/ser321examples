@@ -40,8 +40,21 @@ class SockBaseClient {
             // read from the server
             in = serverSock.getInputStream();
 			
-
-
+			// Build Request
+			Request.Builder reqBuilder = Request.newBuilder();
+			reqBuilder.setOperationType(Request.OperationType.ADD);
+			reqBuilder.addNums(1);
+			reqBuilder.addNums(2);
+			reqBuilder.addNums(3);
+			reqBuilder.addNums(4);
+			Request req = reqBuilder.build(); 
+			
+			// Send Out
+			req.writeDelimitedTo(out);
+			
+			// Read In
+			Response res = Response.parseDelimitedFrom(in);
+			System.out.println("Result is: " + res.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
