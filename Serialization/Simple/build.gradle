@@ -46,7 +46,6 @@ task arguments {
       file = project.getProperty("file")
     }
 }
-
 //gradle runClient -Pport=9099 -Phost='localhost' -Pfile='data.json'
 task runClient(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath

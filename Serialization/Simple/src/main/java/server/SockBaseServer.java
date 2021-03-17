@@ -6,14 +6,18 @@ import java.io.*;
 import buffers.OperationProtos.Request;
 import buffers.OperationProtos.Response;
 
-
+/**
+- server 
+- multi thread
+-- create thread
+-- handle client in thread
+-- (close connection when client disconnects)
+*/
 class SockBaseServer {
     public static void main (String args[]) throws Exception {
 
         int count = 0;
         ServerSocket    serv = null;
-        InputStream in = null;
-        OutputStream out = null;
         Socket clientSocket = null;
         int port = 9099; // default port
         int sleepDelay = 10000; // default delay
@@ -37,10 +41,28 @@ class SockBaseServer {
         }
         while (serv.isBound() && !serv.isClosed()) {
             System.out.println("Ready...");
-            try {
-                clientSocket = serv.accept();
-                in = clientSocket.getInputStream();
-                out = clientSocket.getOutputStream();
+			clientSocket = serv.accept();
+			System.out.println("Threaded server conneceted to client-" + count);
+			ThreadedSockServer myServerThread = new ThreadedSockServer(clientSocket, count++);
+			myServerThread.start();
+        }
+    }
+	static class ThreadedSockServer extends Thread {	
+		InputStream in = null;
+		OutputStream out = null;
+		Socket conn = null;
+		int id = 0;
+		
+		public ThreadedSockServer(Socket sock, int id) {
+			this.conn = sock;
+			this.id = id;
+		}
+		
+		public void run() { 
+			try {
+				// goes in run
+                in = conn.getInputStream();
+                out = conn.getOutputStream();
 				
 				// Read in
 				Request req = Request.parseDelimitedFrom(in);
@@ -59,7 +81,7 @@ class SockBaseServer {
                 
 				// Create Out
 				Response.Builder resBuilder = Response.newBuilder();
-				resBuilder.setSuccesst(true);
+				resBuilder.setSuccess(true);
 				resBuilder.setResult(val);
 				Response res = resBuilder.build();
 				
@@ -69,12 +91,21 @@ class SockBaseServer {
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {
-                if (out != null)  out.close();
-                if (in != null)   in.close();
-                if (clientSocket != null) clientSocket.close();
+				try {
+					if (out != null) {
+						out.close(); // run
+					}
+					if (in != null) {
+						in.close(); // run
+					}
+					if (conn != null){
+						conn.close(); // either
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
             }
-        }
-    }
-
+		}
+	}
 }
 

@@ -1,3 +1,7 @@
+cd C:\Users\tahir\OneDrive\Documents\School\Spring 2021\SER 321\Assignment1\1.1\ser321examples\Serialization\Simple
+gradle runClient -Pport=9099 -Phost='localhost' -Pfile='data.json'
+gradle runServer -Pport=9099
+
 #### Purpose:
 Demonstrate simple Client and Server communication using `SocketServer` and `Socket`classes.
 

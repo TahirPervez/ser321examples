@@ -36,26 +36,39 @@ class SockBaseClient {
 
             // write to the server
             out = serverSock.getOutputStream();
-
+			
             // read from the server
             in = serverSock.getInputStream();
 			
-			// Build Request
-			Request.Builder reqBuilder = Request.newBuilder();
-			reqBuilder.setOperationType(Request.OperationType.ADD);
-			reqBuilder.addNums(1);
-			reqBuilder.addNums(2);
-			reqBuilder.addNums(3);
-			reqBuilder.addNums(4);
-			Request req = reqBuilder.build(); 
-			
-			// Send Out
-			req.writeDelimitedTo(out);
-			
-			// Read In
-			Response res = Response.parseDelimitedFrom(in);
-			System.out.println("Result is: " + res.toString());
+			BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+			String strToSend = "";
+			while(!strToSend.equals("quit")) {
+				System.out.print("Type anything");
+				strToSend = stdin.readLine();    // blocks
 
+				// Build Request
+				Request.Builder reqBuilder = Request.newBuilder();
+				reqBuilder.setOperationType(Request.OperationType.ADD);
+				reqBuilder.addNums(1);
+				reqBuilder.addNums(2);
+				reqBuilder.addNums(3);
+				reqBuilder.addNums(4);
+				Request req = reqBuilder.build(); 
+				
+				// Send Out
+				req.writeDelimitedTo(out);
+				
+				// Read In
+				Response res = Response.parseDelimitedFrom(in);
+				System.out.println("Result is: " + res.toString());
+			}
+			try {
+				if(stdin != null) {
+					stdin.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
